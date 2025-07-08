@@ -1,10 +1,11 @@
 import { Router, Request, Response } from 'express';
 import Venda from '../models/Venda';
+import { autenticar, requerAdmin } from '../middleware/auth';
 
 const router: Router = Router();
 
-// Listar vendas
-router.get('/', async (req: Request, res: Response) => {
+// Listar vendas - qualquer usuário autenticado pode ver
+router.get('/', autenticar, async (req: Request, res: Response) => {
   try {
     const vendas = await Venda.find();
     res.json(vendas);
@@ -13,8 +14,8 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-// Cadastrar venda
-router.post('/', async (req: Request, res: Response) => {
+// Cadastrar venda - qualquer usuário autenticado pode criar
+router.post('/', autenticar, async (req: Request, res: Response) => {
   try {
     const venda = new Venda(req.body);
     await venda.save();
@@ -24,8 +25,8 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// Excluir venda
-router.delete('/:id', async (req: Request, res: Response) => {
+// Excluir venda - apenas admin pode excluir
+router.delete('/:id', autenticar, requerAdmin, async (req: Request, res: Response) => {
   try {
     const venda = await Venda.findByIdAndDelete(req.params.id);
     if (!venda) return res.status(404).json({ error: 'Venda não encontrada' });
