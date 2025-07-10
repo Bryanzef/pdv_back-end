@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
 interface IItem {
   nome: string;
@@ -14,6 +14,7 @@ interface IVenda extends Document {
   data: Date;
   itens: IItem[];
   total: number;
+  usuario?: mongoose.Types.ObjectId;
 }
 
 const itemSchema: Schema = new Schema<IItem>({
@@ -29,7 +30,8 @@ const itemSchema: Schema = new Schema<IItem>({
 const vendaSchema: Schema = new Schema<IVenda>({
   data: { type: Date, default: Date.now },
   itens: [itemSchema],
-  total: { type: Number, required: true }
+  total: { type: Number, required: true },
+  usuario: { type: Schema.Types.ObjectId, ref: 'Usuario' }
 });
 
 export default mongoose.model<IVenda>('Venda', vendaSchema);

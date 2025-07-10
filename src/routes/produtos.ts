@@ -1,14 +1,20 @@
-import { Router, Request, Response } from 'express';
-import Produto from '../models/Produto';
+import { Request, Response, Router } from 'express';
 import { autenticar, requerAdmin } from '../middleware/auth';
+import Produto from '../models/Produto';
 
 const router: Router = Router();
 
 // Listar produtos - qualquer usuário autenticado pode ver
 router.get('/', autenticar, async (req: Request, res: Response) => {
   try {
-    const produtos = await Produto.find();
-    res.json(produtos);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+    const [produtos, total] = await Promise.all([
+      Produto.find().skip(skip).limit(limit),
+      Produto.countDocuments()
+    ]);
+    res.json({ data: produtos, total, page, totalPages: Math.ceil(total / limit) });
   } catch (err) {
     res.status(500).json({ error: 'Erro ao listar produtos' });
   }

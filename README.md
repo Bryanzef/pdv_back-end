@@ -1,53 +1,60 @@
-# Back-end - Sistema de Fruteira
+# Sistema PDV Fruteira - Backend
 
-## Configuração de Variáveis de Ambiente
+## 🏗️ Visão Geral
+Este projeto faz parte do sistema completo de PDV para Fruteira, composto por um backend (Node.js/Express/TypeScript), frontend (React/TypeScript) e banco de dados MongoDB. O backend fornece APIs REST seguras para autenticação, cadastro de produtos, registro de vendas e histórico.
 
-### 1. Criar arquivo .env
+## 🔗 Integração
+- O frontend consome as APIs REST deste backend.
+- Autenticação via JWT: o token é gerado no login e enviado pelo frontend em cada requisição protegida.
+- CORS configurado para aceitar requisições do frontend.
 
-Crie um arquivo `.env` na raiz do projeto back-end com as seguintes variáveis:
+## ⚙️ Tecnologias
+- Node.js, Express, TypeScript
+- MongoDB + Mongoose
+- JWT para autenticação
+- Bcryptjs para hash de senhas
+- Helmet, CORS, Rate Limiting para segurança
 
-```env
-# Configurações do MongoDB
-MONGODB_URI=mongodb+srv:/seu_usuario:sua_senha.24ewds.mongodb.net/?rsfy&appName=sdfsdf
+## 🚦 Fluxo de Autenticação
+1. Usuário faz login via `/api/auth/login`.
+2. Backend valida credenciais, gera JWT e retorna ao frontend.
+3. Frontend armazena o token e envia em cada requisição protegida.
+4. Backend valida o token e autoriza o acesso conforme o perfil (`admin` ou `usuario`).
 
-# Configurações do Servidor
-PORT=5000
 
-# Configurações de Ambiente
-NODE_ENV=development
-```
+   ```
 
-### 2. Variáveis de Ambiente Disponíveis
+## 🧑‍💻 Scripts Úteis
+- `npm run dev` — Servidor em modo desenvolvimento
+- `npm run build` — Compila o TypeScript
+- `npm start` — Servidor em produção
+- `npm run criar-admin` — Cria o usuário admin inicial
+- `npx ts-node src/scripts/seedProdutos.ts` — Popula o banco com 20 produtos
+- `npx ts-node src/scripts/seedVendas.ts` — Popula o banco com 5 vendas
 
-| Variável | Descrição | Padrão | Obrigatória |
-|----------|-----------|--------|-------------|
-| `MONGODB_URI` | String de conexão do MongoDB | - | ✅ |
-| `PORT` | Porta do servidor | 5000 | ❌ |
-| `NODE_ENV` | Ambiente de execução | development | ❌ |
+## 🛣️ Endpoints Principais
+- `POST /api/auth/login` — Login
+- `POST /api/auth/registro` — Cadastro de usuário (admin)
+- `GET /api/auth/me` — Dados do usuário logado
+- `POST /api/auth/alterar-senha` — Alterar senha
+- `GET/POST/PUT/DELETE /api/produtos` — CRUD de produtos
+- `GET/POST/DELETE /api/vendas` — Registro e histórico de vendas
 
-### 3. Segurança
+## 🌱 Seeds e Dados de Teste
+1. Crie o admin: `npm run criar-admin`
+2. Popule produtos: `npx ts-node src/scripts/seedProdutos.ts`
+3. Popule vendas: `npx ts-node src/scripts/seedVendas.ts`
 
-⚠️ **IMPORTANTE**: 
-- O arquivo `.env` já está no `.gitignore` para não ser commitado
-- Nunca commite credenciais reais no repositório
-- Use variáveis de ambiente diferentes para cada ambiente (dev, staging, prod)
+## 📁 Estrutura de Pastas
+- `src/models` — Schemas do Mongoose
+- `src/routes` — Rotas da API
+- `src/middleware` — Middlewares de autenticação e segurança
+- `src/scripts` — Scripts utilitários e seeds
+- `src/server.ts` — Inicialização do servidor
 
-### 4. Como executar
+## 📝 Observações
+- O backend depende do MongoDB rodando localmente ou em nuvem.
+- O frontend deve ser configurado para apontar para a URL deste backend.
 
-```bash
-# Instalar dependências
-npm install
-
-# Executar em desenvolvimento
-npm run dev
-
-# Executar em produção
-npm start
-```
-
-### 5. Validações
-
-O servidor agora valida se as variáveis obrigatórias estão configuradas:
-- Se `MONGODB_URI` não estiver definida, o servidor para com erro
-- Logs informativos mostram a configuração atual
-- Avisos para variáveis opcionais não definidas 
+## 👨‍💻 Contato
+Desenvolvido por Bryan — 2024 
