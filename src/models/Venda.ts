@@ -1,29 +1,8 @@
-import mongoose, { Document, Schema } from 'mongoose';
+// Modelo Venda agora é gerenciado pelo Prisma. Tipos são importados do Prisma Client.
+// Tipos auxiliares para snapshot de produtos podem ser definidos aqui se necessário.
 
-export interface IVenda extends Document {
-  produtos: Array<{
-    produtoId: mongoose.Types.ObjectId;
-    quantidade: number;
-    precoUnitario: number;
-  }>;
-  total: number;
-  data: Date;
-  cliente?: string;
-  usuario: mongoose.Types.ObjectId;
-}
+// Exemplo:
+// export type Venda = Prisma.Sale;
+// export type SaleItem = Prisma.SaleItem;
 
-const VendaSchema = new Schema<IVenda>({
-  produtos: [
-    {
-      produtoId: { type: Schema.Types.ObjectId, ref: 'Produto', required: true },
-      quantidade: { type: Number, required: true },
-      precoUnitario: { type: Number, required: true },
-    },
-  ],
-  total: { type: Number, required: true },
-  data: { type: Date, default: Date.now },
-  cliente: { type: String },
-  usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true },
-});
-
-export default mongoose.model<IVenda>('Venda', VendaSchema); 
+// Para queries, use o Prisma Client via src/lib/prisma.ts 

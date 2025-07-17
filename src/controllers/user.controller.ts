@@ -1,4 +1,4 @@
-// Controller de usuário
+
 import { NextFunction, Request, Response } from 'express';
 import * as userService from '../services/user.service';
 

@@ -2,7 +2,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express, { Express } from 'express';
 import helmet from 'helmet';
-import mongoose from 'mongoose';
 import { errorHandler } from './middleware/errorHandler';
 import { apiLimiter } from './middleware/rateLimit';
 import authRoutes from './routes/auth';
@@ -29,16 +28,6 @@ if (process.env.NODE_ENV !== 'development') {
   app.use('/api', apiLimiter);
 }
 
-
-if (!process.env.MONGODB_URI) {
-  console.error('❌ Erro: MONGODB_URI não está definida no arquivo .env');
-  process.exit(1);
-}
-
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ Conectado ao MongoDB'))
-  .catch(err => console.error('❌ Erro ao conectar ao MongoDB:', err));
-
 // Rotas de autenticação
 app.use('/api/auth', authRoutes);
 // Rotas de usuários
@@ -51,7 +40,6 @@ app.use(errorHandler);
 
 const PORT: number = parseInt(process.env.PORT as string) || 5000;
 
-
 if (!process.env.NODE_ENV) {
   console.warn('⚠️  NODE_ENV não definido, usando "development" como padrão');
 }
@@ -59,4 +47,6 @@ if (!process.env.NODE_ENV) {
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
   console.log(`🌍 Ambiente: ${process.env.NODE_ENV || 'development'}`);
+  console.log('✅ Backend conectado ao PostgreSQL via Prisma');
+  console.log('🔗 Certifique-se que o frontend está rodando em http://localhost:5173 e o backend em http://localhost:' + PORT);
 });

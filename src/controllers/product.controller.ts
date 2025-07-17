@@ -32,6 +32,13 @@ export async function atualizarProduto(req: Request, res: Response, next: NextFu
 export async function excluirProduto(req: Request, res: Response, next: NextFunction) {
   try {
     const result = await productService.excluirProduto(req.params.id);
+    if (!result.success) {
+      // Se for erro de integridade, retornar 400
+      if (result.message && result.message.includes('vinculado a vendas')) {
+        return res.status(400).json(result);
+      }
+      return res.status(404).json(result);
+    }
     res.status(200).json(result);
   } catch (err) {
     next(err);

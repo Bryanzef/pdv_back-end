@@ -1,72 +1,40 @@
-import dotenv from 'dotenv';
-import mongoose from 'mongoose';
-import Produto from '../models/Produto';
-import Usuario from '../models/Usuario';
-import Venda from '../models/Venda';
+import prisma from '../lib/prisma';
 
-dotenv.config();
-
-const seedVendas = async () => {
-  try {
-    if (!process.env.MONGODB_URI) {
-      console.error('❌ MONGODB_URI não está definida no arquivo .env');
-      process.exit(1);
-    }
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('✅ Conectado ao MongoDB');
-
-    const produtos = await Produto.find().limit(10);
-    const admin = await Usuario.findOne({ role: 'admin' });
-    if (!admin) {
-      console.error('❌ Nenhum usuário admin encontrado. Execute o script criarAdmin primeiro.');
-      process.exit(1);
-    }
-    if (produtos.length < 3) {
-      console.error('❌ Poucos produtos para criar vendas. Execute o seedProdutos primeiro.');
-      process.exit(1);
-    }
-
-    await Venda.deleteMany({});
-
-    const vendas = Array.from({ length: 5 }).map((_, i) => {
-      const itens = [
-        {
-          nome: produtos[0].nome,
-          quantidade: 2 + i,
-          preco: produtos[0].preco,
-          tipo: produtos[0].tipo,
-          subtotal: produtos[0].preco * (2 + i)
-        },
-        {
-          nome: produtos[1].nome,
-          quantidade: 1,
-          preco: produtos[1].preco,
-          tipo: produtos[1].tipo,
-          subtotal: produtos[1].preco * 1
-        },
-        {
-          nome: produtos[2].nome,
-          quantidade: 3,
-          preco: produtos[2].preco,
-          tipo: produtos[2].tipo,
-          subtotal: produtos[2].preco * 3
-        }
-      ];
-      return {
-        data: new Date(Date.now() - i * 86400000),
-        itens,
-        total: itens.reduce((acc, item) => acc + item.subtotal, 0),
-        usuario: admin._id
-      };
-    });
-
-    await Venda.insertMany(vendas);
-    console.log('✅ 5 vendas inseridas com sucesso!');
-    process.exit(0);
-  } catch (error) {
-    console.error('❌ Erro ao inserir vendas:', error);
+async function main() {
+  // Buscar admin e produtos
+  const admin = await prisma.user.findFirst({ where: { perfil: 'admin' } });
+  const produtos = await prisma.product.findMany({ take: 3 });
+  if (!admin || produtos.length < 3) {
+    console.error('❌ Admin ou produtos insuficientes. Rode os outros seeds primeiro.');
     process.exit(1);
   }
-};
+  // Limpar vendas antigas
+  await prisma.saleItem.deleteMany({});
+  await prisma.sale.deleteMany({});
+  // Criar vendas de exemplo
+  for (let i = 0; i < 3; i++) {
+    const itens = produtos.map((p, idx) => ({
+      nome: p.nome,
+      preco: p.preco,
+      quantidade: 1 + i + idx,
+      productId: p.id
+    }));
+    const total = itens.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
+    await prisma.sale.create({
+      data: {
+        total,
+        vendedorId: admin.id,
+        metodoPagamento: 'dinheiro',
+        createdAt: new Date(Date.now() - i * 86400000),
+        saleItems: { create: itens }
+      }
+    });
+  }
+  console.log('✅ Vendas de exemplo inseridas!');
+  process.exit(0);
+}
 
-seedVendas(); 
+main().catch(e => {
+  console.error(e);
+  process.exit(1);
+}); 

@@ -1,17 +1,7 @@
-import mongoose, { Schema, Document } from 'mongoose';
+// Modelo Produto agora é gerenciado pelo Prisma. Tipos são importados do Prisma Client.
+// Se precisar de tipos customizados, crie-os aqui.
 
-interface IProduto extends Document {
-  nome: string;
-  preco: number;
-  tipo: 'peso' | 'fixo';
-  imagem: string;
-}
+// Exemplo:
+// export type Produto = Prisma.Product;
 
-const produtoSchema: Schema = new Schema<IProduto>({
-  nome: { type: String, required: true, unique: true },
-  preco: { type: Number, required: true, min: 0 },
-  tipo: { type: String, enum: ['peso', 'fixo'], required: true },
-  imagem: { type: String, default: '📦' }
-});
-
-export default mongoose.model<IProduto>('Produto', produtoSchema);
+// Para queries, use o Prisma Client via src/lib/prisma.ts
