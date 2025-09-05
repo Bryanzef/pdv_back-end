@@ -19,11 +19,11 @@ async function main() {
 
   // Seed Produtos
   const produtos = [
-    { nome: 'Banana', preco: 4.99, categoria: 'peso', estoque: 100, ativo: true },
-    { nome: 'Maçã', preco: 6.49, categoria: 'peso', estoque: 100, ativo: true },
-    { nome: 'Laranja', preco: 5.29, categoria: 'peso', estoque: 100, ativo: true },
-    { nome: 'Abacaxi', preco: 7.99, categoria: 'fixo', estoque: 100, ativo: true },
-    { nome: 'Melancia', preco: 12.99, categoria: 'fixo', estoque: 100, ativo: true }
+    { nome: 'Banana', preco: 4.99, categoria: 'peso', estoque: 100, ativo: true, tipo: 'peso' },
+    { nome: 'Maçã', preco: 6.49, categoria: 'peso', estoque: 100, ativo: true, tipo: 'peso' },
+    { nome: 'Laranja', preco: 5.29, categoria: 'peso', estoque: 100, ativo: true, tipo: 'peso' },
+    { nome: 'Abacaxi', preco: 7.99, categoria: 'fixo', estoque: 100, ativo: true, tipo: 'unidade' },
+    { nome: 'Melancia', preco: 12.99, categoria: 'fixo', estoque: 100, ativo: true, tipo: 'unidade' }
   ];
   await prisma.saleItem.deleteMany({});
   await prisma.sale.deleteMany({});
@@ -43,6 +43,7 @@ async function main() {
     await prisma.sale.create({
       data: {
         total,
+        valorPago: total,
         vendedorId: admin.id,
         metodoPagamento: 'dinheiro',
         createdAt: new Date(Date.now() - i * 86400000),

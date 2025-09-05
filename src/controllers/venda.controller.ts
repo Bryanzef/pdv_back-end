@@ -8,8 +8,8 @@ export const criarVenda = async (req: Request, res: Response) => {
     }
     const venda = await vendaService.criarVenda({ ...req.body, usuario: req.usuario });
     res.status(201).json(venda);
-  } catch (error) {
-    res.status(400).json({ erro: 'Erro ao criar venda', detalhes: error });
+  } catch (error: any) {
+    res.status(400).json({ erro: error?.message || 'Erro ao criar venda' });
   }
 };
 

@@ -5,6 +5,12 @@ export const criarVenda = async (dados: any) => {
   if (!itens || !Array.isArray(itens) || itens.length === 0) {
     throw new Error('Itens da venda são obrigatórios');
   }
+  // Validar se todos os itens têm productId válido
+  for (const item of itens) {
+    if (!item.productId || typeof item.productId !== 'string') {
+      throw new Error('Todos os itens devem ter um productId válido');
+    }
+  }
   if (!pagamento || !pagamento.forma) {
     throw new Error('Forma de pagamento obrigatória');
   }
@@ -14,27 +20,31 @@ export const criarVenda = async (dados: any) => {
     throw new Error('Valor pago insuficiente');
   }
   const troco = (parseFloat(valorPagoStr) - parseFloat(totalStr)).toFixed(2);
-  const venda = await prisma.sale.create({
-    data: {
-      total: totalStr,
-      valorPago: valorPagoStr,
-      troco: troco === '0.00' ? null : troco,
-      vendedorId: usuario.id,
-      metodoPagamento: pagamento.forma,
-      saleItems: {
-        create: itens.map((item: any) => ({
-          nome: item.nome,
-          preco: Number(item.preco).toFixed(2),
-          quantidade: item.quantidade,
-          product: { connect: { id: item.productId } }
-        }))
+  try {
+    const venda = await prisma.sale.create({
+      data: {
+        total: totalStr,
+        valorPago: valorPagoStr,
+        troco: troco === '0.00' ? null : troco,
+        vendedorId: usuario.id,
+        metodoPagamento: pagamento.forma,
+        saleItems: {
+          create: itens.map((item: any) => ({
+            nome: item.nome,
+            preco: Number(item.preco).toFixed(2),
+            quantidade: item.quantidade,
+            product: { connect: { id: item.productId } }
+          }))
+        }
+      },
+      include: {
+        saleItems: true
       }
-    },
-    include: {
-      saleItems: true
-    }
-  });
-  return venda;
+    });
+    return venda;
+  } catch (err: any) {
+    throw new Error('Erro ao criar venda: ' + (err?.message || 'Erro desconhecido'));
+  }
 };
 
 export const listarVendas = async () => {
@@ -51,7 +61,7 @@ export const buscarVendaPorId = async (id: string) => {
     where: { id },
     include: {
       vendedor: { select: { id: true, nome: true, email: true } },
-      saleItems: true
+      saleItems: { include: { product: true } }
     }
   });
 };

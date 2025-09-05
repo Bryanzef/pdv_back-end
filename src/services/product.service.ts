@@ -26,8 +26,8 @@ export async function criarProduto({ nome, preco, tipo, estoque }: any) {
   if (!nome || preco == null || !tipo) {
     return { success: false, message: 'Nome, preço e tipo são obrigatórios' };
   }
-  const produto = await prisma.product.create({ data: { nome, preco, categoria: tipo, estoque: estoque ?? 100 } });
-  const produtoCompat = { _id: produto.id, nome: produto.nome, preco: produto.preco, tipo: produto.categoria, estoque: produto.estoque, ativo: produto.ativo };
+  const produto = await prisma.product.create({ data: { nome, preco, categoria: tipo, estoque: estoque ?? 100, tipo } });
+  const produtoCompat = { _id: produto.id, nome: produto.nome, preco: produto.preco, tipo: produto.tipo, estoque: produto.estoque, ativo: produto.ativo };
   return { success: true, message: 'Produto criado com sucesso', dados: produtoCompat };
 }
 
