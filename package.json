@@ -6,7 +6,7 @@
     "start": "node dist/server.js",
     "dev": "nodemon src/server.ts",
     "build": "tsc",
-    "build:prod": "npx prisma generate && npm run build",
+    "build:prod": "npm install && npx prisma generate && npm run build",
     "deploy": "npm run build:prod && npm start",
     "prisma:migrate": "prisma migrate dev --name init",
     "prisma:generate": "prisma generate",
