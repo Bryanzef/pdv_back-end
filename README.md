@@ -1,6 +1,8 @@
-# PDV Backend API
+# 🍉 PDV Sistema - Backend API
 
-Sistema de PDV (Ponto de Venda) - Backend API desenvolvido com Node.js, Express, TypeScript e Prisma.
+**Sistema de PDV (Ponto de Venda) - Backend API desenvolvido com Node.js, Express, TypeScript e Prisma**
+
+> ⚠️ **AVISO LEGAL**: Este projeto é de propriedade exclusiva de **Bryan Zef**. É **PROIBIDO** copiar, distribuir, modificar ou usar este código sem autorização expressa por escrito do autor. Todos os direitos reservados.
 
 ## 🚀 Tecnologias
 
@@ -24,43 +26,96 @@ Sistema de PDV (Ponto de Venda) - Backend API desenvolvido com Node.js, Express,
 - ✅ Validação de dados com Zod
 - ✅ Logs estruturados
 
-## 🛠️ Instalação
+## 🛠️ Instalação e Configuração Local
 
-1. Clone o repositório:
+### 1. Pré-requisitos
+- Node.js 18+ instalado
+- PostgreSQL ou conta no Supabase
+- Git instalado
+
+### 2. Clone o repositório
 ```bash
 git clone https://github.com/Bryanzef/pdv_back-end.git
 cd pdv_back-end
 ```
 
-2. Instale as dependências:
+### 3. Instale as dependências
 ```bash
 npm install
 ```
 
-3. Configure as variáveis de ambiente:
+### 4. Configure as variáveis de ambiente
 ```bash
+# Copie o arquivo de exemplo
 cp env.example .env
 ```
 
-4. Configure o arquivo `.env` com suas credenciais:
+### 5. Configure o arquivo `.env` para desenvolvimento local
 ```env
+# Configuração do Servidor
 PORT=5000
 NODE_ENV=development
+
+# URL do frontend (para CORS)
 FRONTEND_URL=http://localhost:5173
-DATABASE_URL="postgresql://usuario:senha@localhost:5432/pdv_bryan"
-JWT_SECRET="sua_chave_secreta_jwt_aqui"
+
+# Banco de Dados PostgreSQL (Supabase)
+DATABASE_URL="postgresql://usuario:senha@host:porta/database"
+
+# JWT Secret (gere uma chave forte)
+JWT_SECRET="sua_chave_secreta_jwt_aqui_123456789"
+
+# Configurações de Rate Limiting
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
 ```
 
-5. Execute as migrações do banco:
+### 6. Configure o banco de dados
 ```bash
+# Gere o cliente Prisma
 npm run prisma:generate
-npm run prisma:migrate
-```
 
-6. (Opcional) Execute os seeds para dados iniciais:
-```bash
+# Execute as migrações
+npm run prisma:migrate
+
+# (Opcional) Popule com dados iniciais
 npm run seed:admin
 npm run seed:produtos
+```
+
+### 7. Execute o projeto
+```bash
+# Modo desenvolvimento
+npm run dev
+
+# O servidor iniciará em http://localhost:5000
+```
+
+## 🔧 Configuração do Frontend Local
+
+Para testar a integração completa, configure o frontend:
+
+### 1. Clone o frontend
+```bash
+git clone https://github.com/Bryanzef/pdv_front-end.git
+cd pdv_front-end
+```
+
+### 2. Configure o frontend
+```bash
+# Instale dependências
+npm install
+
+# Configure .env (deixe VITE_API_URL vazio para usar proxy)
+cp .env.example .env
+```
+
+### 3. Execute o frontend
+```bash
+# Desenvolvimento
+npm run dev
+
+# O frontend rodará em http://localhost:5173
 ```
 
 ## 🚀 Executando
@@ -68,6 +123,7 @@ npm run seed:produtos
 ### Desenvolvimento
 ```bash
 npm run dev
+# Acesse: http://localhost:5000
 ```
 
 ### Produção
